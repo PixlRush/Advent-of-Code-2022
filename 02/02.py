@@ -3,8 +3,7 @@ conv = {"X": -1, "Y": 0, "Z": 1}
 score = 0
 
 with open("input.txt", 'r') as theFile:
-    theLine = theFile.readline()
-    while theLine:
+    for theLine in theFile:
         opp, outcome = theLine.strip().split()
         outcome = conv[outcome]
 
@@ -17,6 +16,5 @@ with open("input.txt", 'r') as theFile:
 
         # Score your shape
         score += me + 1
-        theLine = theFile.readline()
 
 print(score)
