@@ -4,3 +4,4 @@ The [advent of code](https://adventofcode.com/2022) is a very fun thing, this re
 ０２：★★
 ０３：★★
 ０４：★★
+０５：★
