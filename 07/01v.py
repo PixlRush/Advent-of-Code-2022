@@ -2,6 +2,7 @@ pwd = ''
 filesystem = dict()
 dirs = []
 
+print("--== Ingesting File Tree ==--")
 with open("input.txt", 'r') as theFile:
     for theLine in theFile:  # Ingest File Tree
         # Command Mode
@@ -38,6 +39,7 @@ with open("input.txt", 'r') as theFile:
                 filesystem[dirname] = int(first)
                 pass
 
+print("\n--== Calculating Directory Size ==--")
 # Handle the / directory
 filesystem["/"] = 0
 dirs.append("/")
@@ -53,6 +55,7 @@ while not allDirsCalced:
     for d in [k for k in dirs if filesystem[k] is None]:
         if allDirsCalced:  # Not All Done
             allDirsCalced = False
+        print(f"searching {d}")
         acc = 0
         dnamesize = len(d)
         # Pass over keys
@@ -64,19 +67,24 @@ while not allDirsCalced:
             if name[:dnamesize] == d \
                and name[dnamesize:].count("/") < 2 \
                and name != d:
+                print(f"hit {name} ({filesystem[name]})")
                 if filesystem[name] is None:
                     depFlag = True
+                    print("!!! Dependancy Found")
                     continue
                 else:
                     acc += filesystem[name]
         if not depFlag:
+            print(f"Size Determined {acc}")
             filesystem[d] = acc
 
 
+print("\n--== Making Output ==--")
 # Give output
 output = 0
 for d in dirs:
     if filesystem[d] <= 100000:
+        print(f"directory {d} at size {filesystem[d]}")
         output += filesystem[d]
 
 print(output)
