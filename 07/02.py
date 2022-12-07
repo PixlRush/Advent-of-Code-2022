@@ -8,7 +8,6 @@ with open("input.txt", 'r') as theFile:
         if theLine[0] == "$":
             # Command cd
             if "cd" in theLine:
-                print(f"{pwd} -> ", end='')
                 if "/" in theLine:
                     pwd = ''
                 elif ".." in theLine:
@@ -19,21 +18,18 @@ with open("input.txt", 'r') as theFile:
                 else:
                     _, _, target = theLine.split()
                     pwd = f"{pwd}/{target}"
-                print(f"{pwd}")
 
         # Parsing Mode
         else:
             first, last = theLine.split()
             if first == "dir":
                 # Add directory named last to pwd
-                print(f"new folder {last}")
                 dirname = last if pwd == '' else f"{pwd}/{last}"
                 filesystem[dirname] = None  # Will Calc Later
                 dirs.append(dirname)
                 pass
             else:
                 # Make file with size last
-                print(f"file {last} with size {first}")
                 dirname = last if pwd == '' else f"{pwd}/{last}"
                 filesystem[dirname] = int(first)
                 pass
@@ -73,10 +69,11 @@ while not allDirsCalced:
             filesystem[d] = acc
 
 
-# Give output
-output = 0
-for d in dirs:
-    if filesystem[d] <= 100000:
-        output += filesystem[d]
+# Parameters
+diskspace = 70000000
+updatespace = 30000000
+usedspace = filesystem["/"]
+freespace = diskspace - usedspace
+requiredspace = updatespace - freespace
 
-print(output)
+print(min([filesystem[d] for d in dirs if filesystem[d] >= requiredspace]))
