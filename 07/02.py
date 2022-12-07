@@ -80,11 +80,11 @@ while not allDirsCalced:
 
 
 print("\n--== Making Output ==--")
-# Give output
-output = 0
-for d in dirs:
-    if filesystem[d] <= 100000:
-        print(f"directory {d} at size {filesystem[d]}")
-        output += filesystem[d]
+# Parameters
+diskspace = 70000000
+updatespace = 30000000
+usedspace = filesystem["/"]
+freespace = diskspace - usedspace
+requiredspace = updatespace - freespace
 
-print(output)
+print(min([filesystem[d] for d in dirs if filesystem[d] >= requiredspace]))
