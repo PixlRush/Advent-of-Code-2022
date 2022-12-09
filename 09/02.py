@@ -24,12 +24,10 @@ def vDiff(a, b):
 
 
 def handleTail(head, tail, ind):
-    print(f"Handling {head} -- {tail}")
     # Move the Tail
     delta = vDiff(head, tail)
     if max(map(abs, delta)) > 1:
         d = [sign(delta[0]), sign(delta[1])]
-        print(f"{d} -> rope[{ind}] to {vAdd(tail, d)}")
         t = vAdd(tail, d)
         return t
 
@@ -41,11 +39,9 @@ with open("input.txt", 'r') as theFile:
         mov, steps = theLine.strip().split(" ")
         steps = int(steps)
         vect = vects[mov]
-        print(f"== {mov} {steps} ==")
         for i in range(steps):
             # Move the Head
             rope[0] = vAdd(rope[0], vect)
-            print(f"Head to {rope[0]}")
 
             # Move the Trail
             for i in range(1, len(rope)):
@@ -54,6 +50,5 @@ with open("input.txt", 'r') as theFile:
             # Touch the Tail
             if rope[-1] not in touched:
                 touched.append(rope[-1])
-                print(f"New tail touch point {rope[-1]}")
 
 print(len(touched))
