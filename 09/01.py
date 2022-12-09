@@ -1,11 +1,18 @@
-head = (0, 0)
-tail = (0, 0)
+rope = [(0, 0), (0, 0)]
 vects = {"U": (0, 1),
          "D": (0, -1),
          "L": (-1, 0),
          "R": (1, 0)}
 
-touched = {(0, 0)}
+touched = [(0, 0)]
+
+
+def sign(x):
+    if x > 0:
+        return 1
+    if x < 0:
+        return -1
+    return 0
 
 
 def vAdd(a, b):
@@ -16,6 +23,19 @@ def vDiff(a, b):
     return tuple(map(lambda x: x[0] - x[1], zip(a, b)))
 
 
+def handleTail(head, tail, ind):
+    print(f"Handling {head} -- {tail}")
+    # Move the Tail
+    delta = vDiff(head, tail)
+    if max(map(abs, delta)) > 1:
+        d = [sign(delta[0]), sign(delta[1])]
+        print(f"{d} -> rope[{ind}] to {vAdd(tail, d)}")
+        t = vAdd(tail, d)
+        return t
+
+    return tail
+
+
 with open("input.txt", 'r') as theFile:
     for theLine in theFile:
         mov, steps = theLine.strip().split(" ")
@@ -23,27 +43,17 @@ with open("input.txt", 'r') as theFile:
         vect = vects[mov]
         print(f"== {mov} {steps} ==")
         for i in range(steps):
-            head = vAdd(head, vect)
-            print(f"Head to {head}")
-            # Move the Tail
-            delta = vDiff(head, tail)
-            # Ensure tail needs to be moved
-            if max(map(abs, delta)) > 1:
-                # Must be orthogonal a 0 & 2
-                if 0 in delta:
-                    print(vect, end='')
-                    tail = vAdd(tail, vect)
-                else:
-                    tVect = [0, 0]
-                    tVect[0] = -1 if (delta[0] < 0) else 1
-                    tVect[1] = -1 if (delta[1] < 0) else 1
-                    print(tVect, end='')
-                    tail = vAdd(tail, tVect)
-                print(f" -> Tail to {tail}")
+            # Move the Head
+            rope[0] = vAdd(rope[0], vect)
+            print(f"Head to {rope[0]}")
+
+            # Move the Trail
+            for i in range(1, len(rope)):
+                rope[i] = handleTail(rope[i-1], rope[i], i)
 
             # Touch the Tail
-            if tail not in touched:
-                touched.add(tail)
-                print(f"New tail touch point {tail}")
+            if rope[-1] not in touched:
+                touched.append(rope[-1])
+                print(f"New tail touch point {rope[-1]}")
 
 print(len(touched))
