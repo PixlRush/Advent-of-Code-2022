@@ -1,8 +1,13 @@
-testLogic = lambda x: lambda y: deWorry(y) % x == 0
+from functools import reduce
+from numpy import lcm
+# reduce(lcm, [2, 3, 5])
+
+testLogic = lambda x: lambda y: y % x == 0
 test = lambda cond, t, f: lambda x: t if cond(x) else f
 aOp = lambda x: lambda y: x + y
 mOp = lambda x: lambda y: x * y
 eOp = lambda x: x * x
+modular = lambda x: lambda y: y % x
 deWorry = lambda x: x // 3
 
 monkeys = []
@@ -13,10 +18,11 @@ class Monkey(object):
         self.inv = inv
         self.op = op
         self.tst = tst
+        self.red = None  # Modular comes here
         self.activity = 0
 
     def turn(self):
-        acc = list(map(lambda x: (deWorry(x), self.tst(x)),
+        acc = list(map(lambda x: (self.red(x), self.tst(x)),
                        map(self.op, self.inv)))
         self.inv = []
         self.activity += len(acc)
@@ -27,6 +33,7 @@ class Monkey(object):
 
 
 with open("input.txt", 'r') as theFile:
+    factors = []
     for theLine in theFile:
         if theLine == "\n":
             continue
@@ -39,17 +46,22 @@ with open("input.txt", 'r') as theFile:
         theLine = theFile.readline()
         op = None
         if theLine.count("old") > 1:
+
             op = eOp
         else:
             num = int(theLine.strip().split(" ")[-1])
             if "*" in theLine:
+
                 op = mOp(num)
             elif "+" in theLine:
+
                 op = aOp(num)
 
         # Handle Test
         theLine = theFile.readline()
         factor = int(theLine.strip().split(" ")[-1])
+        factors.append(factor)
+
         checker = testLogic(factor)
 
         # Handle True
@@ -64,7 +76,13 @@ with open("input.txt", 'r') as theFile:
 
         monkeys.append(Monkey(items, op, tst))
 
-for i in range(20):
+    monkeylcm = reduce(lcm, factors)
+
+    monkeyMod = modular(monkeylcm)
+    for monkey in monkeys:
+        monkey.red = monkeyMod
+
+for i in range(10000):
     t = 0
     for monkey in monkeys:
         t += 1
@@ -73,6 +91,7 @@ for i in range(20):
             monkeys[target].accept(item)
 
 activities = [m.activity for m in monkeys]
+
 activities.sort(reverse=True)
 business = activities[0] * activities[1]
 print(business)
